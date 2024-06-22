@@ -27,7 +27,7 @@ router.get('/generate', async (req, res) => {
   const newLink = new Link({ originalUrl, shortUrl });
   try {
     await newLink.save();
-    res.send(`Share this link: ${originalUrl}`);
+    res.send(`Share this link: <a href="${originalUrl}">${originalUrl}</a>`);
   } catch (error) {
     console.error('Error generating link:', error);
     res.status(500).send('Error generating link.');
@@ -47,6 +47,7 @@ router.get('/link/:shortUrl', async (req, res) => {
   const ua = useragent.parse(req.headers['user-agent']);
   const deviceData = {
     ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+    ips: req.ips,
     browser: ua.family || 'Unknown',
     os: ua.os.family || 'Unknown',
     device: (ua.device && ua.device.family) || 'Unknown',
@@ -62,7 +63,10 @@ router.get('/link/:shortUrl', async (req, res) => {
     subdomains: req.subdomains,
     referrer: req.get('Referrer') || req.get('Referer') || 'Unknown',
     cookies: req.cookies || 'None',
-    body: req.body || 'None'
+    body: req.body || 'None',
+    userId: req.user ? req.user.id : null, // Example: If using authentication
+    userAgent: req.headers['user-agent'],
+    linkId: link._id // Reference to the Link model
   };
 
   // Save to MongoDB
