@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "npm start server.js"
   },
   "author": "Rishabh Prajapati",
   "license": "ISC",
@@ -18,5 +19,8 @@
     "shortid": "^2.2.16",
     "user-agent": "^1.0.4",
     "useragent": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }
