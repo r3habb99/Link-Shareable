@@ -22,7 +22,7 @@ const getFormattedTimestamp = () => {
 // Generate a unique link
 router.get('/generate', async (req, res) => {
   const shortUrl = shortid.generate(); // Generate a unique short ID
-  const originalUrl = `http://localhost:3000/link/${shortUrl}`;
+  const originalUrl = `https://link-refer.onrender.com/link/${shortUrl}`;
 
   const newLink = new Link({ originalUrl, shortUrl });
   try {
