@@ -27,7 +27,7 @@ const DeviceDataSchema = new mongoose.Schema({
   // Additional fields
   userId: String, // Example: If you have a user authentication system
   userAgent: mongoose.Schema.Types.Mixed, // Full user agent object
-  linkId: mongoose.Schema.Types.ObjectId // Reference to the Link model
+  linkId: { type: mongoose.Schema.Types.ObjectId, ref: 'Link' } // Reference to the Link model
 });
 
 module.exports = mongoose.model('DeviceData', DeviceDataSchema);
