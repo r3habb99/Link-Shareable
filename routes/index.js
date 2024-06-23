@@ -45,6 +45,7 @@ router.get('/link/:shortUrl', async (req, res) => {
     }
 
     const ua = useragent.parse(req.headers['user-agent']);
+    const uniqueVisitorId = shortid.generate(); // Generate a unique ID for each visitor
     const deviceData = new DeviceData({
       ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
       ips: req.ips,
@@ -66,7 +67,8 @@ router.get('/link/:shortUrl', async (req, res) => {
       body: req.body || 'None',
       userId: req.user ? req.user.id : null, // Example: If using authentication
       userAgent: req.headers['user-agent'],
-      linkId: link._id // Reference to the Link model
+      linkId: link._id, // Reference to the Link model
+      uniqueVisitorId // Save the unique ID for the visitor
     });
 
     // Save to MongoDB
@@ -82,7 +84,17 @@ router.get('/link/:shortUrl', async (req, res) => {
         console.error('Error writing to JSON file:', writeError);
         return res.status(500).send('Error saving device data.');
       }
-      res.send('Device data has been saved.');
+      // Send response with script to close the page
+      res.send(`
+        <html>
+          <body>
+            <script>
+              window.close();
+              window.location.href = 'about:blank';
+            </script>
+          </body>
+        </html>
+      `);
     });
   } catch (error) {
     console.error('Error saving device data to MongoDB:', error);
