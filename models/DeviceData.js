@@ -28,7 +28,14 @@ const DeviceDataSchema = new mongoose.Schema({
   userId: String, // Example: If you have a user authentication system
   userAgent: mongoose.Schema.Types.Mixed, // Full user agent object
   linkId: { type: mongoose.Schema.Types.ObjectId, ref: 'Link' }, // Reference to the Link model
-  uniqueVisitorId: String // Unique visitor ID
+  uniqueVisitorId: String, // Unique visitor ID
+  location: { // Location details
+    country: String,
+    region: String,
+    city: String,
+    latitude: Number,
+    longitude: Number
+  }
 });
 
 module.exports = mongoose.model('DeviceData', DeviceDataSchema);

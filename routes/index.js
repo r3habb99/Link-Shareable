@@ -6,6 +6,7 @@ const useragent = require('useragent');
 const fs = require('fs');
 const path = require('path');
 const shortid = require('shortid');
+const axios = require('axios');
 
 // Helper function to get a formatted timestamp
 const getFormattedTimestamp = () => {
@@ -24,7 +25,7 @@ router.get('/generate', async (req, res) => {
   const shortUrl = shortid.generate(); // Generate a unique short ID
   const originalUrl = `https://link-refer.onrender.com/link/${shortUrl}`;
 
-  const newLink = new Link({ originalUrl, shortUrl });
+  const newLink = new Link({ originalUrl, shortUrl, isActive: true, uniqueVisitorIds: [] });
   try {
     await newLink.save();
     res.send(`Share this link: <a href="${originalUrl}">${originalUrl}</a>`);
@@ -38,16 +39,32 @@ router.get('/generate', async (req, res) => {
 router.get('/link/:shortUrl', async (req, res) => {
   const { shortUrl } = req.params;
   try {
-    const link = await Link.findOne({ shortUrl });
+    let link = await Link.findOne({ shortUrl });
 
-    if (!link) {
-      return res.status(404).send('Link not found.');
+    if (!link || !link.isActive) {
+      return res.status(404).send('Link not found or is inactive.');
     }
 
     const ua = useragent.parse(req.headers['user-agent']);
     const uniqueVisitorId = shortid.generate(); // Generate a unique ID for each visitor
+
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    if (ip === '::1' || ip === '127.0.0.1') {
+      // Replace localhost IP with a public IP for testing
+      ip = '8.8.8.8'; // Use a public IP like Google's DNS for testing
+    }
+
+    let locationData = {};
+    try {
+      // Get location data from ip-api
+      const locationResponse = await axios.get(`http://ip-api.com/json/${ip}`);
+      locationData = locationResponse.data;
+    } catch (locationError) {
+      console.error('Error fetching location data:', locationError);
+    }
+
     const deviceData = new DeviceData({
-      ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+      ip,
       ips: req.ips,
       browser: ua.family || 'Unknown',
       os: ua.os.family || 'Unknown',
@@ -68,11 +85,26 @@ router.get('/link/:shortUrl', async (req, res) => {
       userId: req.user ? req.user.id : null, // Example: If using authentication
       userAgent: req.headers['user-agent'],
       linkId: link._id, // Reference to the Link model
-      uniqueVisitorId // Save the unique ID for the visitor
+      uniqueVisitorId, // Save the unique ID for the visitor
+      location: {
+        country: locationData.country || 'Unknown',
+        region: locationData.regionName || 'Unknown',
+        city: locationData.city || 'Unknown',
+        latitude: locationData.lat || 0,
+        longitude: locationData.lon || 0
+      }
     });
 
     // Save to MongoDB
     await deviceData.save();
+
+    // Add the unique visitor ID to the link's uniqueVisitorIds array
+    link.uniqueVisitorIds.push(uniqueVisitorId);
+    await link.save();
+
+    // Mark the link as inactive after the first visit
+    link.isActive = false;
+    await link.save();
 
     // Save to JSON file with a unique name based on timestamp
     const timestamp = getFormattedTimestamp();
