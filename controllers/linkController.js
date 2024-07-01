@@ -16,7 +16,8 @@ const {
 
 exports.generateLink = async (req, res) => {
   const shortUrl = shortid.generate();
-  const originalUrl = `http://localhost:3000/link/${shortUrl}`;
+  //const originalUrl = `http://localhost:3000/link/${shortUrl}`;
+  const originalUrl = `https://link-refer.onrender.com/link/${shortUrl}`;
 
   const newLink = new Link({
     originalUrl,
