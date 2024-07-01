@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const { logger } = require('./index');
+const logger = require('../utils/logger.utils');
 function sendClosePageScript(res) {
   const filePath = path.join(__dirname, '..', 'views', 'closePage.html');
 

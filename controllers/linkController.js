@@ -7,9 +7,9 @@ const path = require('path');
 const fs = require('fs');
 const {
   getFormattedTimestamp,
-  logger,
   sendClosePageScript,
 } = require('../utils/index');
+const logger = require('../utils/logger.utils');
 
 exports.generateLink = async (req, res) => {
   const shortUrl = shortid.generate();

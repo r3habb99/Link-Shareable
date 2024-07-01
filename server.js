@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const linkRoutes = require('./routes/linkRoutes');
-const { logger } = require('./utils/index');
+const logger = require('./utils/logger.utils');
 require('dotenv').config();
 
 const app = express();
@@ -14,7 +14,7 @@ app.use(cookieParser());
 
 app.use('/', linkRoutes);
 const PORT = process.env.PORT || 3000;
-const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_URL = process.env.URL;
 
 mongoose
   .connect(DATABASE_URL)
