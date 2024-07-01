@@ -5,9 +5,6 @@ const shortid = require('shortid');
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
-// const logger = require('../utils/logger.utils');
-// const getFormattedTimestamp = require('../utils/formattedTimeStamp.utils');
-// const { sendClosePageScript } = require('../utils/sendClosePageScript.utils');
 const {
   getFormattedTimestamp,
   logger,
