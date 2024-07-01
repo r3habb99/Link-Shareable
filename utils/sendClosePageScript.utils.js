@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const logger = require('../utils/logger.utils');
-function sendClosePageScript(res) {
+module.exports = function sendClosePageScript(res) {
   const filePath = path.join(__dirname, '..', 'views', 'closePage.html');
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -12,8 +12,5 @@ function sendClosePageScript(res) {
     }
     res.send(data);
   });
-}
-
-module.exports = {
-  sendClosePageScript,
 };
+
