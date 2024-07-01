@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closing Page</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .message {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="message">This window will close automatically.</div>
+        <button id="closeButton">Close Window</button>
+    </div>
+    <script>
+        function closeWindow() {
+            if (window.opener) {
+                window.close();
+                window.opener = null; // Prevent further access to the opener
+                window.location.href = 'about:blank';
+            } else {
+                window.location.href = 'about:blank';
+            }
+        }
+
+        document.getElementById('closeButton').addEventListener('click', closeWindow);
+
+        // Try to close the window automatically after a short delay
+        setTimeout(() => {
+            closeWindow();
+        }, 2000);
+    </script>
+</body>
+
+</html>
